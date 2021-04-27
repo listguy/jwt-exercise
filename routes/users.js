@@ -98,9 +98,14 @@ users.post("/token", (req, res) => {
     if (err) {
       return res.status(403).send("Invalid Refresh Token");
     }
-    const accessToken = jwt.sign(decoded, ACCESS_TOKEN_SECRET, {
-      expiresIn: "10s",
-    });
+    const { name, email, isAdmin } = decoded;
+    const accessToken = jwt.sign(
+      { name, email, isAdmin },
+      ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "10s",
+      }
+    );
 
     return res.json({ accessToken });
   });
