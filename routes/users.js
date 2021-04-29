@@ -15,7 +15,7 @@ users.post("/register", (req, res) => {
 
   // If user exists, send appropriate response
   if (checkUser) {
-    return res.status(409).send("user already exists");
+    return res.status(409).json({ message: "user already exists" });
   }
 
   // If user does not exist, create it:
@@ -36,7 +36,7 @@ users.post("/register", (req, res) => {
     info: `${name} info`,
   });
 
-  res.status(201).send("Register Success");
+  res.status(201).json({ message: "Register Success" });
 });
 
 users.post("/login", async (req, res) => {
@@ -45,14 +45,14 @@ users.post("/login", async (req, res) => {
   const user = USERS.find((entry) => entry.email === email);
 
   if (!user) {
-    return res.status(404).send("cannot find user");
+    return res.status(404).json({ message: "cannot find user" });
   }
 
   try {
     const isPasswordCorrect = await compare(password, user.password);
 
     if (!isPasswordCorrect) {
-      return res.status(403).send("User or Password incorrect");
+      return res.status(400).json({ message: "User or Password incorrect" });
     }
 
     const dataInToken = {
@@ -75,7 +75,7 @@ users.post("/login", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    res.status(500).json({ message: error });
   }
 });
 
@@ -85,18 +85,18 @@ users.post("/tokenValidate", validateToken, (req, res) => {
 
 users.post("/token", (req, res) => {
   const { token } = req.body;
-
+  console.log(token);
   if (!token) {
-    return res.status(401).send("Refresh Token Required");
+    return res.status(401).json({ message: "Refresh Token Required" });
   }
 
   if (!REFRESHTOKENS.includes(token)) {
-    return res.status(403).send("Invalid Refresh Token");
+    return res.status(401).json({ message: "Invalid Refresh Token" });
   }
 
   jwt.verify(token, REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).send("Invalid Refresh Token");
+      return res.status(401).json({ message: "Invalid Refresh Token" });
     }
     const { name, email, isAdmin } = decoded;
     const accessToken = jwt.sign(
@@ -115,7 +115,7 @@ users.post("/logout", (req, res) => {
   const { token } = req.body;
 
   if (!token) {
-    return res.status(400).send("Refresh Token Required");
+    return res.status(400).json({ message: "Refresh Token Required" });
   }
 
   const refreshTokenIndex = REFRESHTOKENS.findIndex(
@@ -123,12 +123,12 @@ users.post("/logout", (req, res) => {
   );
 
   if (refreshTokenIndex === -1) {
-    return res.status(400).send("Invalid Refresh Token");
+    return res.status(400).json({ message: "Invalid Refresh Token" });
   }
 
   REFRESHTOKENS.splice(refreshTokenIndex, 1);
 
-  return res.send("User Logged Out Successfully");
+  return res.json({ message: "User Logged Out Successfully" });
 });
 
 module.exports = users;

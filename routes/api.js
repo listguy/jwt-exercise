@@ -9,14 +9,14 @@ api.get("/information", validateToken, (req, res) => {
 
   const info = INFORMATION.find((info) => info.email === email);
 
-  res.json([{ email, info }]);
+  res.json([info]);
 });
 
 api.get("/users", validateToken, (req, res) => {
   const { isAdmin } = req.user;
 
   if (!isAdmin) {
-    return res.json("Invalid Access Token");
+    return res.json({ message: "Invalid Access Token" });
   }
   res.json(USERS);
 });
