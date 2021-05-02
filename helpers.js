@@ -6,7 +6,7 @@ const USERS = [
     isAdmin: true,
   },
 ];
-const INFORMATION = [];
+const INFORMATION = [{ email: "admin@email.com", info: "admin info" }];
 const REFRESHTOKENS = [];
 
 module.exports = { USERS, INFORMATION, REFRESHTOKENS };

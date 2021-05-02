@@ -85,7 +85,7 @@ users.post("/tokenValidate", validateToken, (req, res) => {
 
 users.post("/token", (req, res) => {
   const { token } = req.body;
-  console.log(token);
+
   if (!token) {
     return res.status(401).json({ message: "Refresh Token Required" });
   }

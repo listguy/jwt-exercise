@@ -15,16 +15,13 @@ async function Network(endPoint, { body, ...config }) {
     ...(body ? { body: JSON.stringify(body) } : {}),
   };
 
-  console.log(customConfig);
-
   const request = new Request(url, customConfig);
 
   try {
     const response = await fetch(request);
     const data = await response.json();
 
-    if (response.status === 200) {
-      console.log(`Got response ${response.status}`, data);
+    if (response.status >= 200 && response.status < 300) {
       return data;
     } else {
       if (response.status === 403) {
@@ -34,7 +31,6 @@ async function Network(endPoint, { body, ...config }) {
         });
 
         Cookies.set("accessToken", accessToken);
-
         const data2 = await Network(request.url, request);
         return data2;
       }
@@ -45,7 +41,7 @@ async function Network(endPoint, { body, ...config }) {
     if (error.status === 500) {
       alert("Internal error");
     }
-    console.log(error);
+
     throw error;
   }
 }
